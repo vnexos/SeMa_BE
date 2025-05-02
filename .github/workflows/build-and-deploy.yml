@@ -44,7 +44,7 @@ jobs:
     - name: Prepare artifacts
       run: |
         mkdir -p app/modules
-        cp webapp/target/ROOT.war app/
+        cp core/target/ROOT.war app/
         cp modules/*/target/*.jar app/modules/
         mkdir -p lib
         cp webapp/target/ROOT-lib.jar lib/sema-lib.jar
