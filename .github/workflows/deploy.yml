@@ -32,10 +32,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
     - name: Create bundle.zip from assets
       run: |
-        mkdir bundle
-        ls
-        cd core/target
-        ls
+        find . -name "*.jar"
+        find . -name "*.war"
+        find . -name "*.pom"
         cp core/target/core* bundle/
         zip -j bundle.zip bundle/*
 
