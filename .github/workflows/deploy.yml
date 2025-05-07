@@ -1,0 +1,41 @@
+name: Build and Deploy to maven repository
+
+on:
+  release:
+    types: [created]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+        fetch-depth: 0
+    - name: Set up Java for publishing to Maven Central Repository
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        server-id: ossrh
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
+    - name: Publish to the Maven Central Repository
+      run: mvn --batch-mode deploy -pl core -am
+      env:
+        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+    - name: Set up JDK 21 for Github package
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build with Maven
+      run: mvn --batch-mode --update-snapshots install
+    - name: Deploy to GitHub
+      run: mvn --batch-mode -DskipTests -DuseGitHubPackages=true deploy -pl core -am
+      env:
+        GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}

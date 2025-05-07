@@ -8,7 +8,7 @@ As the grow of a project, it become larger, more complexity, and harder to creat
 ### Installation
 1. Clone a Git repository from Github
    ```bash
-   git clone --recurse-submodules https://github.com/vnexos/SeMa_main.git
+   git clone --recurse-submodules https://github.com/vnexos/SeMa_BE.git
    ```
 2. Setup the development environment by the path to the tomcat folder inside the `run.cmd` file (or `run.sh` file for linux)
    ```cmd
