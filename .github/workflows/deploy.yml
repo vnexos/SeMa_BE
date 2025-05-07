@@ -20,6 +20,10 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+    - name: Set project version from GitHub tag
+      run: |
+        VERSION=${GITHUB_REF##*/}
+        mvn versions:set -DnewVersion=$VERSION
     - name: Build with Maven
       run: mvn --batch-mode --update-snapshots install
     - name: Deploy to GitHub
