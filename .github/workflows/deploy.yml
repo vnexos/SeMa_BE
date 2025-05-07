@@ -47,7 +47,8 @@ jobs:
         for file in $BUNDLE_FOLDER/*; do
           md5sum "$file" | awk '{ print $1 }' > "$file.md5"
           sha1sum "$file" | awk '{ print $1 }' > "$file.sha1"
-          gpg --batch --yes --armor --local-user "${{ secrets.GPG_KEY_ID }}" --output "$file.asc" --detach-sign "$file"
+          gpg --batch --yes --armor --local-user "${{ secrets.GPG_KEY_ID }}" -ab "$file"
+          gpg --verify "$file.asc"
         done
     - name: Zip the bundle
       run: |
