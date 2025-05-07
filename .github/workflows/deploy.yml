@@ -44,6 +44,11 @@ jobs:
           sha1sum "$file" | awk '{ print $1 }' > "$file.sha1"
         done
         zip -j bundle.zip bundle/*
+    - name: Upload built app artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: bundle
+        path: bundle.zip
     - name: Upload bundle.zip with curl
       run: |
         curl --request POST \
