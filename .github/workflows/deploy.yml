@@ -5,6 +5,8 @@ on:
     types: [created]
 jobs:
   deploy:
+    runs-on: ubuntu-latest
+    steps:
     - uses: actions/checkout@v4
       with:
         submodules: 'recursive'
