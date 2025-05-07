@@ -38,14 +38,6 @@
     </profile>
   </profiles>
 
-  <distributionManagement>
-    <repository>
-      <id>central.manual.testing</id>
-      <name>Central Testing repository</name>
-      <url>https://central.sonatype.com/api/v1/publisher/deployments/download</url>
-    </repository>
-  </distributionManagement>
-
   <build>
     <pluginManagement>
       <plugins>

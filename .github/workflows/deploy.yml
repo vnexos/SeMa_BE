@@ -14,19 +14,6 @@ jobs:
       with:
         submodules: 'recursive'
         fetch-depth: 0
-    - name: Set up Java for publishing to Maven Central Repository
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        server-id: ossrh
-        server-username: MAVEN_USERNAME
-        server-password: MAVEN_PASSWORD
-    - name: Publish to the Maven Central Repository
-      run: mvn --batch-mode -DaltDeploymentRepository=central.manual.testing::https://central.sonatype.com/api/v1/publisher/deployments/download deploy -pl core -am
-      env:
-        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
     - name: Set up JDK 21 for Github package
       uses: actions/setup-java@v4
       with:
@@ -39,3 +26,19 @@ jobs:
       run: mvn --batch-mode -DskipTests -DuseGitHubPackages=true deploy -pl core -am
       env:
         GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+    - name: Create bundle.zip from assets
+      run: |
+        mkdir bundle
+        cp core/target/core* bundle/
+        zip -j bundle.zip bundle/*
+
+    - name: Encode Central credentials
+      run: |
+        echo "AUTH_HEADER=$(echo -n '${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_TOKEN }}' | base64)" >> $GITHUB_ENV
+    - name: Upload bundle.zip with curl
+      run: |
+        curl --request POST \
+          --verbose \
+          --header "Authorization: Bearer $AUTH_HEADER" \
+          --form bundle=@bundle.zip \
+          https://central.sonatype.com/api/v1/publisher/upload
