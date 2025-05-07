@@ -20,6 +20,6 @@ jobs:
     - name: Build with Maven
       run: mvn --batch-mode --update-snapshots install
     - name: Deploy to GitHub
-      run: mvn --batch-mode -DskipTests -DuseGitHubPackages=true deploy
+      run: mvn --batch-mode -DskipTests -DuseGitHubPackages=true deploy -pl core -am
       env:
         GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
