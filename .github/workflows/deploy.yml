@@ -49,7 +49,8 @@ jobs:
           sha1sum "$file" | awk '{ print $1 }' > "$file.sha1"
           gpg --batch --yes --pinentry-mode loopback --local-user "${{ secrets.GPG_KEY_ID }}" --armor --output "$file.asc" --detach-sign "$file"
         done
-        cd $BUNDLE_FOLDER
+    - name: Zip the bundle
+      run: |
         cd bundle
         zip -r ../bundle.zip ./
     - name: Upload built app artifacts
