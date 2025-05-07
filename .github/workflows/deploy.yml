@@ -44,7 +44,7 @@ jobs:
         cp core/target/ROOT-lib.jar $BUNDLE_FOLDER/core-${{ env.RELEASE_VERSION }}.jar
         cp core/pom.xml $BUNDLE_FOLDER/core-${{ env.RELEASE_VERSION }}.pom
         gpg --list-secret-keys
-        gpg --batch --yes --pinentry-mode loopback --default-key YOUR_KEY_ID
+        gpg --batch --yes --pinentry-mode loopback --default-key F6AA1DCC30D9B14A847EE9F120C55928F85A4D27
         for file in $BUNDLE_FOLDER/*; do
           md5sum "$file" | awk '{ print $1 }' > "$file.md5"
           sha1sum "$file" | awk '{ print $1 }' > "$file.sha1"
