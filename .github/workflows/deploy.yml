@@ -65,4 +65,4 @@ jobs:
           --verbose \
           --header "Authorization: Bearer $AUTH_HEADER" \
           --form bundle=@bundle.zip \
-          https://central.sonatype.com/api/v1/publisher/upload?name=${{ env.RELEASE_VERSION }}
+          https://central.sonatype.com/api/v1/publisher/upload?name=${{ env.RELEASE_VERSION }}&publishingType=AUTOMATIC
