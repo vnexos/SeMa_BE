@@ -50,7 +50,8 @@ jobs:
           gpg --batch --yes --pinentry-mode loopback --local-user "${{ secrets.GPG_KEY_ID }}" --armor --output "$file.asc" --detach-sign "$file"
         done
         cd $BUNDLE_FOLDER
-        zip -j bundle.zip bundle/**/*
+        cd bundle
+        zip -r ../bundle.zip ./
     - name: Upload built app artifacts
       uses: actions/upload-artifact@v4
       with:
