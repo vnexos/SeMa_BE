@@ -27,7 +27,6 @@ jobs:
         echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
     - name: Set project version from GitHub tag
       run: |
-        echo ${{ env.RELEASE_VERSION }}
         mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }}
     - name: Build with Maven
       run: mvn --batch-mode --update-snapshots install
@@ -37,6 +36,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
     - name: Create bundle.zip from assets
       run: |
+        mkdir bundle/
         cp core/target/ROOT-lib.jar bundle/core-${{ env.RELEASE_VERSION }}.jar
         cp core/pom.xml bundle/core-${{ env.RELEASE_VERSION }}.pom
         for file in bundle/*; do
