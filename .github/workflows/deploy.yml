@@ -20,10 +20,15 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+
+    - name: Setup environment
+      run: |
+        echo "AUTH_HEADER=$(echo -n '${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_TOKEN }}' | base64)" >> $GITHUB_ENV
+        echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
     - name: Set project version from GitHub tag
       run: |
-        VERSION=${GITHUB_REF##*/}
-        mvn versions:set -DnewVersion=$VERSION
+        echo ${{ env.RELEASE_VERSION }}
+        mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }}
     - name: Build with Maven
       run: mvn --batch-mode --update-snapshots install
     - name: Deploy to GitHub
@@ -32,18 +37,13 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
     - name: Create bundle.zip from assets
       run: |
-        VERSION=${GITHUB_REF##*/}
-        cp core/target/ROOT-lib.jar bundle/core-$VERSION.jar
-        cp core/pom.xml bundle/core-$VERSION.pom
+        cp core/target/ROOT-lib.jar bundle/core-${{ env.RELEASE_VERSION }}.jar
+        cp core/pom.xml bundle/core-${{ env.RELEASE_VERSION }}.pom
         for file in bundle/*; do
           md5sum "$file" | awk '{ print $1 }' > "$file.md5"
           sha1sum "$file" | awk '{ print $1 }' > "$file.sha1"
         done
         zip -j bundle.zip bundle/*
-
-    - name: Encode Central credentials
-      run: |
-        echo "AUTH_HEADER=$(echo -n '${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_TOKEN }}' | base64)" >> $GITHUB_ENV
     - name: Upload bundle.zip with curl
       run: |
         curl --request POST \
