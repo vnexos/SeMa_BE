@@ -47,7 +47,7 @@ jobs:
         for file in $BUNDLE_FOLDER/*; do
           md5sum "$file" | awk '{ print $1 }' > "$file.md5"
           sha1sum "$file" | awk '{ print $1 }' > "$file.sha1"
-          gpg --batch --yes --pinentry-mode loopback --local-user "${{ secrets.GPG_KEY_ID }}" --armor --output "$file.asc" --detach-sign "$file"
+          gpg --batch --yes --armor --local-user "${{ secrets.GPG_KEY_ID }}" --output "$file.asc" --detach-sign "$file"
         done
     - name: Zip the bundle
       run: |
@@ -64,4 +64,4 @@ jobs:
           --verbose \
           --header "Authorization: Bearer $AUTH_HEADER" \
           --form bundle=@bundle.zip \
-          https://central.sonatype.com/api/v1/publisher/upload
+          https://central.sonatype.com/api/v1/publisher/upload?name=${{ env.RELEASE_VERSION }}
