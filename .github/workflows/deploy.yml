@@ -40,15 +40,15 @@ jobs:
     - name: Create bundle.zip from assets
       run: |
         BUNDLE_FOLDER=bundle/com/vnexos/sema/core/${{ env.RELEASE_VERSION }}/
+        F6AA1DCC30D9B14A847EE9F120C55928F85A4D27
         mkdir -p $BUNDLE_FOLDER
         cp core/target/ROOT-lib.jar $BUNDLE_FOLDER/core-${{ env.RELEASE_VERSION }}.jar
         cp core/pom.xml $BUNDLE_FOLDER/core-${{ env.RELEASE_VERSION }}.pom
         gpg --list-secret-keys
-        gpg --batch --yes --pinentry-mode loopback --default-key F6AA1DCC30D9B14A847EE9F120C55928F85A4D27
         for file in $BUNDLE_FOLDER/*; do
           md5sum "$file" | awk '{ print $1 }' > "$file.md5"
           sha1sum "$file" | awk '{ print $1 }' > "$file.sha1"
-          gpg --batch --yes --armor --output $file.asc --detach-sign $file
+          gpg --batch --yes --pinentry-mode loopback --local-user "${{ secrets.GPG_KEY_ID }}" --armor --output "$file.asc" --detach-sign "$file"
         done
         cd $BUNDLE_FOLDER
         zip -j bundle.zip bundle/**/*
