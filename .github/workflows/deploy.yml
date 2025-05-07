@@ -33,6 +33,9 @@ jobs:
     - name: Create bundle.zip from assets
       run: |
         mkdir bundle
+        ls
+        cd core/target
+        ls
         cp core/target/core* bundle/
         zip -j bundle.zip bundle/*
 
