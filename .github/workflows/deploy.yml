@@ -32,10 +32,13 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
     - name: Create bundle.zip from assets
       run: |
-        find . -name "*.jar"
-        find . -name "*.war"
-        find . -name "*.pom"
-        cp core/target/core* bundle/
+        VERSION=${GITHUB_REF##*/}
+        cp core/target/ROOT-lib.jar bundle/core-$VERSION.jar
+        cp core/pom.xml bundle/core-$VERSION.pom
+        for file in bundle/*; do
+          md5sum "$file" | awk '{ print $1 }' > "$file.md5"
+          sha1sum "$file" | awk '{ print $1 }' > "$file.sha1"
+        done
         zip -j bundle.zip bundle/*
 
     - name: Encode Central credentials
