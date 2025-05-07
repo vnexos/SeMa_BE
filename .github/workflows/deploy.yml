@@ -23,7 +23,7 @@ jobs:
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
     - name: Publish to the Maven Central Repository
-      run: mvn --batch-mode -DaltDeploymentRepository=central.manual.testing::https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/ deploy -pl core -am
+      run: mvn --batch-mode -DaltDeploymentRepository=central.manual.testing::https://central.sonatype.com/api/v1/publisher/deployments/download deploy -pl core -am
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
