@@ -24,7 +24,8 @@ jobs:
     - name: Setup environment
       run: |
         echo "AUTH_HEADER=$(echo -n '${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_TOKEN }}' | base64)" >> $GITHUB_ENV
-        echo "RELEASE_VERSION=$(echo ${GITHUB_REF#refs/*/}" | sed 's/^v//') >> $GITHUB_ENV
+        VERSION=${GITHUB_REF#refs/*/}
+        echo "RELEASE_VERSION=${VERSION#v} >> $GITHUB_ENV
     - name: Set project version from GitHub tag
       run: |
         CLEAN_VERSION=$(echo "${{ env.RELEASE_VERSION }}" | sed 's/^v//')
