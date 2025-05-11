@@ -2,13 +2,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.vnexos.sema</groupId>
   <artifactId>main</artifactId>
-  <groupId>com.vnexos.sema</groupId>
-  <artifactId>main</artifactId>
   <packaging>pom</packaging>
   <version>1.0</version>
   <name>sema Maven Webapp</name>
   <url>http://maven.apache.org</url>
-  
   
   <properties>
     <java.version>21</java.version>
