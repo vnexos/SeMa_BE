@@ -26,6 +26,7 @@ jobs:
         echo "AUTH_HEADER=$(echo -n '${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_TOKEN }}' | base64)" >> $GITHUB_ENV
         VERSION=${GITHUB_REF#refs/*/}
         echo "RELEASE_VERSION=${VERSION#v}" >> $GITHUB_ENV
+        echo "MAIN_VERSION=1.0" >> $GITHUB_ENV
     - name: Set project version from GitHub tag
       run: |
         CLEAN_VERSION=$(echo "${{ env.RELEASE_VERSION }}" | sed 's/^v//')
@@ -61,7 +62,7 @@ jobs:
       with:
         name: core-bundle
         path: core-bundle.zip
-    - name: Upload bundle.zip with curl
+    - name: Upload core-bundle.zip with curl
       run: |
         curl --request POST \
           --verbose \
@@ -71,9 +72,9 @@ jobs:
     
     - name: Create main-bundle.zip from assets
       run: |
-        BUNDLE_FOLDER=main-bundle/com/vnexos/sema/main/${{ env.RELEASE_VERSION }}/
+        BUNDLE_FOLDER=main-bundle/com/vnexos/sema/main/${{ env.MAIN_VERSION }}/
         mkdir -p $BUNDLE_FOLDER
-        cp pom.xml $BUNDLE_FOLDER/main-${{ env.RELEASE_VERSION }}.pom
+        cp pom.xml $BUNDLE_FOLDER/main-${{ env.MAIN_VERSION }}.pom
         gpg --list-secret-keys
         for file in $BUNDLE_FOLDER/*; do
           md5sum "$file" | awk '{ print $1 }' > "$file.md5"
@@ -90,3 +91,10 @@ jobs:
       with:
         name: main-bundle
         path: main-bundle.zip
+    - name: Upload main-bundle.zip with curl
+      run: |
+        curl --request POST \
+          --verbose \
+          --header "Authorization: Bearer $AUTH_HEADER" \
+          --form bundle=@main-bundle.zip \
+          https://central.sonatype.com/api/v1/publisher/upload?name=${GITHUB_REF#refs/*/}&publishingType=AUTOMATIC
