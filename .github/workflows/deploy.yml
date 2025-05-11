@@ -6,20 +6,65 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: 'recursive'
         fetch-depth: 0
-    - name: Set up JDK 21
+    - name: Set up JDK 21 for Github package
       uses: actions/setup-java@v4
       with:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+
+    - name: Setup environment
+      run: |
+        echo "AUTH_HEADER=$(echo -n '${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_TOKEN }}' | base64)" >> $GITHUB_ENV
+        VERSION=${GITHUB_REF#refs/*/}
+        echo "RELEASE_VERSION=${VERSION#v}" >> $GITHUB_ENV
+    - name: Set project version from GitHub tag
+      run: |
+        CLEAN_VERSION=$(echo "${{ env.RELEASE_VERSION }}" | sed 's/^v//')
+        mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }}
     - name: Build with Maven
       run: mvn --batch-mode --update-snapshots install
     - name: Deploy to GitHub
-      run: mvn --batch-mode -DskipTests -DuseGitHubPackages=true deploy
+      run: mvn --batch-mode -DskipTests -DuseGitHubPackages=true deploy -pl core -am
       env:
         GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+    - name: Import GPG key
+      run: |
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+    - name: Create bundle.zip from assets
+      run: |
+        BUNDLE_FOLDER=bundle/com/vnexos/sema/core/${{ env.RELEASE_VERSION }}/
+        mkdir -p $BUNDLE_FOLDER
+        cp core/target/ROOT-lib.jar $BUNDLE_FOLDER/core-${{ env.RELEASE_VERSION }}.jar
+        cp core/pom.xml $BUNDLE_FOLDER/core-${{ env.RELEASE_VERSION }}.pom
+        gpg --list-secret-keys
+        for file in $BUNDLE_FOLDER/*; do
+          md5sum "$file" | awk '{ print $1 }' > "$file.md5"
+          sha1sum "$file" | awk '{ print $1 }' > "$file.sha1"
+          gpg --batch --yes --armor --local-user "${{ secrets.GPG_KEY_ID }}" -ab "$file"
+          gpg --verify "$file.asc"
+        done
+    - name: Zip the bundle
+      run: |
+        cd bundle
+        zip -r ../bundle.zip ./
+    - name: Upload built app artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: bundle
+        path: bundle.zip
+    - name: Upload bundle.zip with curl
+      run: |
+        curl --request POST \
+          --verbose \
+          --header "Authorization: Bearer $AUTH_HEADER" \
+          --form bundle=@bundle.zip \
+          https://central.sonatype.com/api/v1/publisher/upload?name=${GITHUB_REF#refs/*/}&publishingType=AUTOMATIC
