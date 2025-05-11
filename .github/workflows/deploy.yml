@@ -46,6 +46,7 @@ jobs:
         mkdir -p $BUNDLE_FOLDER
         cp core/target/ROOT-lib.jar $BUNDLE_FOLDER/core-${{ env.RELEASE_VERSION }}.jar
         cp core/pom.xml $BUNDLE_FOLDER/core-${{ env.RELEASE_VERSION }}.pom
+        sed -i '/<parent>/,/<\/parent>/d' $BUNDLE_FOLDER/core-${{ env.RELEASE_VERSION }}.pom
         gpg --list-secret-keys
         for file in $BUNDLE_FOLDER/*; do
           md5sum "$file" | awk '{ print $1 }' > "$file.md5"
