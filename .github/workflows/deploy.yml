@@ -39,9 +39,9 @@ jobs:
     - name: Import GPG key
       run: |
         echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
-    - name: Create bundle.zip from assets
+    - name: Create core-bundle.zip from assets
       run: |
-        BUNDLE_FOLDER=bundle/com/vnexos/sema/core/${{ env.RELEASE_VERSION }}/
+        BUNDLE_FOLDER=core-bundle/com/vnexos/sema/core/${{ env.RELEASE_VERSION }}/
         mkdir -p $BUNDLE_FOLDER
         cp core/target/ROOT-lib.jar $BUNDLE_FOLDER/core-${{ env.RELEASE_VERSION }}.jar
         cp core/pom.xml $BUNDLE_FOLDER/core-${{ env.RELEASE_VERSION }}.pom
@@ -52,19 +52,41 @@ jobs:
           gpg --batch --yes --armor --local-user "${{ secrets.GPG_KEY_ID }}" -ab "$file"
           gpg --verify "$file.asc"
         done
-    - name: Zip the bundle
+    - name: Zip the core-bundle
       run: |
-        cd bundle
-        zip -r ../bundle.zip ./
+        cd core-bundle
+        zip -r ../core-bundle.zip ./
     - name: Upload built app artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: bundle
-        path: bundle.zip
+        name: core-bundle
+        path: core-bundle.zip
     - name: Upload bundle.zip with curl
       run: |
         curl --request POST \
           --verbose \
           --header "Authorization: Bearer $AUTH_HEADER" \
-          --form bundle=@bundle.zip \
+          --form bundle=@core-bundle.zip \
           https://central.sonatype.com/api/v1/publisher/upload?name=${GITHUB_REF#refs/*/}&publishingType=AUTOMATIC
+    
+    - name: Create main-bundle.zip from assets
+      run: |
+        BUNDLE_FOLDER=main-bundle/com/vnexos/sema/main/${{ env.RELEASE_VERSION }}/
+        mkdir -p $BUNDLE_FOLDER
+        cp pom.xml $BUNDLE_FOLDER/main-${{ env.RELEASE_VERSION }}.pom
+        gpg --list-secret-keys
+        for file in $BUNDLE_FOLDER/*; do
+          md5sum "$file" | awk '{ print $1 }' > "$file.md5"
+          sha1sum "$file" | awk '{ print $1 }' > "$file.sha1"
+          gpg --batch --yes --armor --local-user "${{ secrets.GPG_KEY_ID }}" -ab "$file"
+          gpg --verify "$file.asc"
+        done
+    - name: Zip the main-bundle
+      run: |
+        cd main-bundle
+        zip -r ../main-bundle.zip ./
+    - name: Upload built main-app artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: main-bundle
+        path: main-bundle.zip
