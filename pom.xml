@@ -4,8 +4,41 @@
   <artifactId>main</artifactId>
   <packaging>pom</packaging>
   <version>1.0</version>
-  <name>sema Maven Webapp</name>
-  <url>http://maven.apache.org</url>
+
+  <name>SeMa Main</name>
+  <url>https://github.com/vnexos/SeMa_BE</url>
+  <description>Parent of the main module</description>
+
+  <developers>
+    <developer>
+      <id>vnexos-owner</id>
+      <name>Mohamed al'Ilnung</name>
+      <email>vnexos.official@gmail.com</email>
+      <organization>vnexos</organization>
+      <organizationUrl>https://github.com/vnexos</organizationUrl>
+    </developer>
+    <developer>
+      <id>haidang71214</id>
+      <name>Moallah al'Lyinsinc</name>
+      <email>haidang71214@gmail.com</email>
+      <organization>vnexos</organization>
+      <organizationUrl>https://github.com/vnexos</organizationUrl>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/vnexos/SeMa_BE</url>
+    <connection>scm:git:https://github.com/vnexos/SeMa_BE</connection>
+    <developerConnection>scm:git:ssh://git@github.com:vnexos/SeMa_BE.git</developerConnection>
+  </scm>
 
   <properties>
     <java.version>21</java.version>
