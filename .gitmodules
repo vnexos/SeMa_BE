@@ -1,15 +1,16 @@
 [submodule "modules/language"]
 	path = modules/language
 	url = git@github.com:vnexos/SeMa_module_language.git
-[submodule "webapp"]
-	path = webapp
-	url = git@github.com:vnexos/SeMa_webapp.git
+	branch = master
 [submodule "modules/authentication"]
 	path = modules/authentication
 	url = git@github.com:vnexos/SeMa_module_authentication.git
+	branch = master
 [submodule "modules/html"]
 	path = modules/html
 	url = git@github.com:vnexos/SeMa_module_html.git
+	branch = master
 [submodule "core"]
 	path = core
 	url = git@github.com:vnexos/SeMa_core.git
+	branch = master

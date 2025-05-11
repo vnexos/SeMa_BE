@@ -68,4 +68,4 @@ jobs:
           --verbose \
           --header "Authorization: Bearer $AUTH_HEADER" \
           --form bundle=@core-bundle.zip \
-          https://central.sonatype.com/api/v1/publisher/upload?name=core-${GITHUB_REF#refs/*/}&publishingType=AUTOMATIC
+          https://central.sonatype.com/api/v1/publisher/upload?name=com.vnexos.sema:core:${GITHUB_REF#refs/*/}&publishingType=AUTOMATIC
