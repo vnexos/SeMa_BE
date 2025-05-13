@@ -1,4 +1,4 @@
-# SeMA - Module-oriented architecture for Java RestAPI
+# SeMa - Module-oriented architecture for Java RestAPI
 (This is my personal project, meaning it does not belong to my old company or my current University)
 
 ## Contents
@@ -111,14 +111,16 @@ This command will build the project, copy target file to webapps folder inside t
   ```
 ## Creating a module
 ### For Command line (recommended)
-Execute maven command to create a module (replace `<...>` with the value). And we should use the Maven Archetype, use can see it [here](https://github.com/vnexos/SeMa_archetype/packages/2501333)
+Execute maven command to create a module (replace `<...>` with the value). And we should use the Maven Archetype, use can see it [here](https://github.com/vnexos/SeMa_archetype/packages/2501333).
+
+[![Latest Release](https://img.shields.io/github/v/release/vnexos/SeMa_archetype?label=SeMa_archetype)](https://github.com/vnexos/SeMa_archetype/releases/latest)
 ```bash
-mvn archetype:generate -DarchetypeGroupId=com.vnexos.sema -DarchetypeArtifactId=module-archetype -DarchetypeVersion=1.0.3 -DgroupId=<com.vnexos.sema.module> -DartifactId=<example-module> -DmoduleName=<example> -Dversion=<1.0> -DinteractiveMode=false
+mvn archetype:generate -DarchetypeGroupId=com.vnexos.sema -DarchetypeArtifactId=module-archetype -DarchetypeVersion=<latest-version> -DgroupId=<com.vnexos.sema.module> -DartifactId=<example-module> -DmoduleName=<example> -Dversion=<1.0> -DinteractiveMode=false
 ```
 With params:
   - `-DarchetypeGroupId`: Should be `com.vnexos.sema`
   - `-DarchetypeArtifactId`: Should be `module-archetype`
-  - `-DarchetypeVersion`: Should be the latest version
+  - `-DarchetypeVersion`: Should be the latest version (not having `v`)
   - `-DgroupId`: Group Id of the module
   - `-DartifactId`: Artifact Id of the module
   - `-DmoduleName`: Name of the module
@@ -126,7 +128,7 @@ With params:
 
 For example, if I want to create a module named `artificial-intelligence` (can be outside or inside of the parent project).
 ```bash
-mvn archetype:generate -DarchetypeGroupId=com.vnexos.sema -DarchetypeArtifactId=module-archetype -DarchetypeVersion=1.0.3 -DgroupId=com.vnexos.sema.module -DartifactId=artificial-intelligence -DmoduleName=AI -DinteractiveMode=false
+mvn archetype:generate -DarchetypeGroupId=com.vnexos.sema -DarchetypeArtifactId=module-archetype -DarchetypeVersion=<latest-version> -DgroupId=com.vnexos.sema.module -DartifactId=artificial-intelligence -DmoduleName=AI -DinteractiveMode=false
 ```
 ### For Eclipse IDE
 1. Create a Maven project by following: **File** > **New** > **New Maven Project**. A window should appear.
@@ -164,6 +166,7 @@ mvn archetype:generate -DarchetypeGroupId=com.vnexos.sema -DarchetypeArtifactId=
 ## Logging
 The SeMa project strongly support logging.
 ![Logging](images/logging.png)
+
 (Logging from core and a module named `Language`)
 
 It support logging from the core for customizing the core in ease.
@@ -337,11 +340,10 @@ public ApiResponse<?> createLanguage(@FromBody LanguageCreateDto request) {
 }
 
 @HttpPatch("{id}")
-public ApiResponse<?> updateLanguage(@FromRoute UUID id, @FromBody LanguageUpdateDto request, @FromBody Part file) {
+public ApiResponse<?> updateLanguage(@FromRoute UUID id, @FromBody LanguageUpdateDto request) {
   try {
     System.out.println(id);
     Language language = languageRepository.update(id, request.getFlagUrl());
-    System.out.println(file.getFileName());
     return createOk(language);
   } catch (Exception ex) {
     return createInternalRequest("Lỗi xãy ra trong quá trình cập nhật.");

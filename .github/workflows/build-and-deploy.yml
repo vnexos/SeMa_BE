@@ -36,6 +36,7 @@ jobs:
         mkdir -p app/modules
         cp core/target/ROOT.war app/
         cp modules/*/target/*.jar app/modules/
+        unzip modules/*/target/*-libs.zip -d app/libs/
         mkdir -p lib
         cp core/target/ROOT-lib.jar lib/sema-lib.jar
         [ -f "app/ROOT.war" ] || exit 1
