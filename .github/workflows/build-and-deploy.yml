@@ -37,8 +37,6 @@ jobs:
         cp core/target/ROOT.war app/
         cp modules/*/target/*.jar app/modules/
         unzip modules/*/target/*-libs.zip -d app/libs/
-        mkdir -p lib
-        cp core/target/ROOT-lib.jar lib/sema-lib.jar
         [ -f "app/ROOT.war" ] || exit 1
         [ "$(ls -A app/modules)" ] || exit 1
         
@@ -55,12 +53,6 @@ jobs:
     if: github.ref == 'refs/heads/master'  # Only deploy on master branch
     
     steps:
-    - name: Upload built lib artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: lib-package
-        path: lib/
-        retention-days: 1
     - name: Download artifacts
       uses: actions/download-artifact@v4
       with:
